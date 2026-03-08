@@ -38,7 +38,7 @@ Say goodbye to StackOverflow. Use CodecPilot directly in your terminal to rapidl
 ### 2. Automated Media Ingestion
 Integrate CodecPilot into your backend microservices. On uploading a video, CodecPilot can analyze the asset and dynamically generate a tailored, multi-bitrate HLS/DASH encoding ladder specifically optimized for that individual file's complexity.
 
-### 3. 🤖 GitHub PR Workflows (CI/CD Integration)
+### 3. GitHub PR Workflows (CI/CD Integration)
 **CodecPilot natively supercharges your Pull Request workflows.** 
 You can run CodecPilot in your GitHub Actions as an automated QA engineer for media-heavy PRs. 
 - **Auto-Review**: When a PR modifies an FFMPEG script, CodecPilot can dry-run the command against a test matrix and comment on potential inefficiencies or compatibility issues.
