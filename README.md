@@ -2,9 +2,9 @@
   <h1>🚀 CodecPilot</h1>
   <p><b>The AI-Native FFmpeg Wrapper for Modern Video Engineering</b></p>
   <p>
-    <a href="https://github.com/yourusername/CodecPilot/releases"><img src="https://img.shields.io/github/v/release/yourusername/CodecPilot?color=blue&label=Release" alt="Release"></a>
-    <a href="https://github.com/yourusername/CodecPilot/actions"><img src="https://img.shields.io/github/actions/workflow/status/yourusername/CodecPilot/ci.yml?branch=main" alt="Build Status"></a>
-    <a href="https://github.com/yourusername/CodecPilot/blob/main/LICENSE"><img src="https://img.shields.io/github/license/yourusername/CodecPilot" alt="License"></a>
+    <a href="https://github.com/echo-escape/CodecPilot/releases"><img src="https://img.shields.io/github/v/release/echo-escape/CodecPilot?color=blue&label=Release" alt="Release"></a>
+    <a href="https://github.com/echo-escape/CodecPilot/actions"><img src="https://img.shields.io/github/actions/workflow/status/echo-escape/CodecPilot/ci.yml?branch=master" alt="Build Status"></a>
+    <a href="https://github.com/echo-escape/CodecPilot/blob/master/LICENSE"><img src="https://img.shields.io/github/license/echo-escape/CodecPilot" alt="License"></a>
   </p>
 </div>
 
@@ -60,7 +60,7 @@ export OPENAI_API_KEY="sk-proj-..."
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/CodecPilot.git
+git clone https://github.com/echo-escape/CodecPilot.git
 cd CodecPilot
 
 # Install via pip
