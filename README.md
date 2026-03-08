@@ -2,7 +2,7 @@
   <h1>🚀 CodecPilot</h1>
   <p><b>The AI-Native FFmpeg Wrapper for Modern Video Engineering</b></p>
   <p>
-    <a href="https://github.com/echo-escape/CodecPilot/releases"><img src="https://img.shields.io/github/v/release/echo-escape/CodecPilot?color=blue&label=Release" alt="Release"></a>
+    <a href="https://github.com/echo-escape/CodecPilot/tags"><img src="https://img.shields.io/github/v/tag/echo-escape/CodecPilot?color=blue&label=Version" alt="Version"></a>
     <a href="https://github.com/echo-escape/CodecPilot/actions"><img src="https://img.shields.io/github/actions/workflow/status/echo-escape/CodecPilot/ci.yml?branch=master" alt="Build Status"></a>
     <a href="https://github.com/echo-escape/CodecPilot/blob/master/LICENSE"><img src="https://img.shields.io/github/license/echo-escape/CodecPilot" alt="License"></a>
   </p>
