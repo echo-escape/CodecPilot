@@ -2,6 +2,10 @@ import typer
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
+from rich.live import Live
+from rich.markdown import Markdown
+from rich.prompt import Prompt, Confirm
+from typing import Optional
 from codecpilot.analyzer import analyze_video, FFprobeError
 
 app = typer.Typer(help="CodecPilot: Smart CLI wrapper and encoding analysis tool for FFmpeg")
@@ -101,24 +105,38 @@ def analyze(file: str = typer.Argument(..., help="Path to the video file to anal
 @app.command()
 def encode(
     file: str = typer.Argument(..., help="Path to the video file to encode"),
-    prompt: str = typer.Option(..., "--prompt", "-p", help="Natural language description of your encoding goals"),
+    prompt: Optional[str] = typer.Option(None, "--prompt", "-p", help="Natural language description of your encoding goals"),
+    profile: Optional[str] = typer.Option(None, "--profile", "-prof", help="Use a saved profile instead of generating a command"),
 ):
-    """Generate and run an optimal FFmpeg encoding command based on a natural language prompt."""
+    """Generate and run an optimal FFmpeg encoding command based on a natural language prompt or profile."""
     from codecpilot.llm import LLMService
     from codecpilot.runner import run_ffmpeg_command, EncodingError
+    from codecpilot.profiles import get_profile, save_profile
     import platform
     
+    if not prompt and not profile:
+        console.print("[bold red]Error:[/bold red] You must provide either --prompt or --profile.")
+        raise typer.Exit(code=1)
+        
     try:
         with console.status("Analyzing source video...", spinner="dots"):
             info = analyze_video(file)
             
-        with console.status("Generating optimal FFmpeg command via AI...", spinner="arc"):
-            llm = LLMService()
-            command_str = llm.generate_encode_command(info, prompt)
+        if profile:
+            command_str = get_profile(profile)
+            if not command_str:
+                console.print(f"[bold red]Error:[/bold red] Profile '{profile}' not found.")
+                raise typer.Exit(code=1)
+        else:
+            with console.status("Generating optimal FFmpeg command via AI...", spinner="arc"):
+                llm = LLMService()
+                command_str = llm.generate_encode_command(info, prompt)
             
-        console.print(Panel(command_str, title="[bold green]Generated FFmpeg Command[/bold green]", expand=False))
+        console.print(Panel(command_str, title="[bold green]Proposed FFmpeg Command[/bold green]", expand=False))
         
-        confirm = typer.confirm("Do you want to execute this command now?")
+        command_str = Prompt.ask("\nEdit the command before execution", default=command_str)
+        
+        confirm = Confirm.ask("Do you want to execute this command now?")
         if not confirm:
             console.print("Operation canceled.")
             raise typer.Abort()
@@ -127,6 +145,15 @@ def encode(
             run_ffmpeg_command(command_str)
             
         console.print("[bold green]Encoding Complete![/bold green]")
+        
+        if not profile:
+            save_ans = Confirm.ask("Do you want to save this command as a profile?")
+            if save_ans:
+                prof_name = Prompt.ask("Enter a profile name")
+                if save_profile(prof_name, command_str):
+                    console.print(f"[green]Profile '{prof_name}' saved![/green]")
+                else:
+                    console.print("[red]Failed to save profile.[/red]")
             
     except FFprobeError as e:
         console.print(f"[bold red]Analysis Error:[/bold red] {e}")
@@ -148,11 +175,15 @@ def explain(
     from codecpilot.llm import LLMService
     
     try:
-        with console.status(f"Asking AI about [bold cyan]{param}[/bold cyan]...", spinner="dots"):
-            llm = LLMService()
-            explanation = llm.explain_parameter(param)
-            
-        console.print(Panel(explanation, title=f"[bold blue]Explanation of {param}[/bold blue]", border_style="blue"))
+        console.print(f"[bold blue]Explanation of {param}[/bold blue]", justify="center")
+        llm = LLMService()
+        generator = llm.explain_parameter(param)
+        
+        content = ""
+        with Live(Markdown(content), console=console, refresh_per_second=15) as live:
+            for chunk in generator:
+                content += chunk
+                live.update(Markdown(content))
         
     except ValueError as e:
          console.print(f"[bold red]Configuration Error:[/bold red] {e}")
@@ -175,11 +206,15 @@ def debug(
         with open(log_file, "r") as f:
             log_content = f.read()
             
-        with console.status("Analyzing error log...", spinner="dots"):
-            llm = LLMService()
-            analysis = llm.debug_log(log_content)
-            
-        console.print(Panel(analysis, title="[bold red]Error Analysis & Fixes[/bold red]", border_style="red"))
+        console.print("[bold red]Error Analysis & Fixes[/bold red]", justify="center")
+        llm = LLMService()
+        generator = llm.debug_log(log_content)
+        
+        content = ""
+        with Live(Markdown(content), console=console, refresh_per_second=15) as live:
+            for chunk in generator:
+                content += chunk
+                live.update(Markdown(content))
         
     except ValueError as e:
          console.print(f"[bold red]Configuration Error:[/bold red] {e}")

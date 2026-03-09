@@ -69,14 +69,16 @@ class LLMService:
             "Include an example of how it is typically used in a command line."
         )
         
-        response = self.client.models.generate_content(
+        response = self.client.models.generate_content_stream(
             model=self.model_name,
             contents=prompt,
             config=genai.types.GenerateContentConfig(
                 temperature=0.5,
             )
         )
-        return response.text.strip()
+        for chunk in response:
+            if chunk.text:
+                yield chunk.text
 
     def debug_log(self, log_content: str) -> str:
         """Analyze an FFmpeg error log and suggest fixes."""
@@ -91,11 +93,13 @@ class LLMService:
             "Please analyze why it failed and suggest a specific fix or modified command."
         )
         
-        response = self.client.models.generate_content(
+        response = self.client.models.generate_content_stream(
             model=self.model_name,
             contents=prompt,
             config=genai.types.GenerateContentConfig(
                 temperature=0.3,
             )
         )
-        return response.text.strip()
+        for chunk in response:
+            if chunk.text:
+                yield chunk.text
